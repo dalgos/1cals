@@ -1,3 +1,16 @@
 {
-  "events": []
+  "events": [
+    {
+      "sid": 0,
+      "startTime": 1569859200000,
+      "endTime": 1569862800000,
+      "title": "test"
+    },
+    {
+      "sid": 1,
+      "startTime": 1572541200000,
+      "endTime": 1572544800000,
+      "title": "test"
+    }
+  ]
 }
