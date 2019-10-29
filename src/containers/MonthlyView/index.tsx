@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getDate } from 'date-fns'
 
@@ -11,6 +11,7 @@ import {
   Row,
 } from 'components/Calendar'
 import { takeOpenEventForm } from 'ducks/eventForm'
+import { fetchEventsActionMap } from 'ducks/events'
 
 export default function MonthlyView(): JSX.Element {
   const dispatch = useDispatch()
@@ -23,6 +24,11 @@ export default function MonthlyView(): JSX.Element {
       mode: 'create',
     }))
   }
+  
+  // 일정 목록을 가져온다
+  useEffect(() => {
+    dispatch(fetchEventsActionMap.request(currentDate))
+  }, [currentDate])
   
   return (
     <Grid>
