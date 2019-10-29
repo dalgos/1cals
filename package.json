@@ -17,7 +17,9 @@
     "@types/redux-saga": "^0.10.5",
     "@types/reselect": "^2.2.0",
     "@types/styled-components": "^4.1.19",
+    "concurrently": "^5.0.0",
     "date-fns": "^2.6.0",
+    "json-server": "^0.15.1",
     "react": "^16.11.0",
     "react-dom": "^16.11.0",
     "react-redux": "^7.1.1",
@@ -31,10 +33,11 @@
     "typescript": "3.6.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "concurrently \"npm run db\" \"react-scripts start\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "db": "json-server --watch ./db/mock.json --port 3030"
   },
   "eslintConfig": {
     "extends": "react-app"
