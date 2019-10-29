@@ -23,5 +23,5 @@ interface CalState {
   dateInfo: DateInfo;
   display: Display;
   eventForm: EventForm;
-  plans: Array<Array<Plan>>;
+  events: Array<Array<Plan>>;
 }
