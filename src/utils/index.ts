@@ -2,12 +2,15 @@ import {
   addDays,
   addHours,
   eachDayOfInterval,
+  eachWeekOfInterval,
   getDay,
   getWeeksInMonth,
   startOfDay,
   startOfMonth,
   startOfWeek,
+  getISOWeek,
 } from 'date-fns'
+import { get } from 'lodash'
 
 /**
  * date가 포함된 주의 첫번째 날짜를 기준으로 7일의 date를 이용해 map을 수행한다.
@@ -59,4 +62,19 @@ export function getCalendarCells(nextDate: Date = new Date()): Array<Array<Plan>
       }
     })
   })
+}
+
+export function arrangeEvents(Events: Event[]) {
+  return Events.reduce<{ [key: string]: Event[] }>((prev, event) => {
+    const weekIndex = getISOWeek(event.startTime)
+    return (
+      {
+        ...prev,
+        [weekIndex.toString()]: [
+          ...get(prev, `${weekIndex}`, []),
+          event,
+        ]
+      }
+    )
+  }, {})
 }
