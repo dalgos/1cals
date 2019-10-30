@@ -19,9 +19,16 @@ interface Plan {
   seq: string;
 }
 
+interface Event {
+  sid: number;
+  startTime: number;
+  endTime: number;
+  title: string;
+}
+
 interface CalState {
   dateInfo: DateInfo;
   display: Display;
   eventForm: EventForm;
-  events: Array<Array<Plan>>;
+  events: Event[];
 }
