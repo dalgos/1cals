@@ -1,5 +1,3 @@
-import { Action } from 'redux'
-
 interface ChangeDisplayAction {
   payload: Display['mode'];
   type: 'CHANGE_DISPLAY_MODE';

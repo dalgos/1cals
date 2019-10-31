@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getDate, getISOWeek, getISODay, getHours, getMinutes, setHours, setMinutes, addHours } from 'date-fns'
 import { get } from 'lodash'
-import { Dispatch } from 'redux'
 
 import { dateInfoSelector, eventsSelector } from 'selectors'
 import { getCalendarCells } from 'utils'
@@ -41,11 +40,11 @@ export default function MonthlyView(): JSX.Element {
   // 현재 기준날짜가 변경되는 경우, 목록을 새로 요청합니다.
   useEffect(() => {
     dispatch(fetchEventsActionMap.request())
-  }, [currentDate])
+  }, [currentDate, dispatch])
   // 일정 목록이 갱신되는 경우 일정 state를 업데이트합니다.
   useEffect(() => {
     setEventsByMonthly(arrangeEvents(events))
-  }, [events])
+  }, [events, setEventsByMonthly])
   
   return (
     <Grid>

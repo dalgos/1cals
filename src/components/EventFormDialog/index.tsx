@@ -7,8 +7,6 @@ import {
   DialogContentText,
   DialogTitle,
   Grid,
-  Select,
-  MenuItem,
   TextField,
 } from '@material-ui/core'
 import { makeStyles } from '@material-ui/core/styles'
@@ -67,7 +65,6 @@ export default function EventFormDialog({
   const classes = useStyles()
 
   const handleDatePickerChange = (date: MaterialUiPickersDate) => {
-    // setSelectedDate(date as Date)
     setFormState((prevState) => ({
       ...prevState,
       date: date as Date,
@@ -105,15 +102,12 @@ export default function EventFormDialog({
     setFormState((prevState) => ({
       ...prevState,
       date: startDate as Date,
-      time: format(
-        startDate,
-        'HH:mm'
-      ),
+      time: format(startDate, 'HH:mm'),
       title,
       duration: `${differenceInHours(endDate, startDate)}`,
       id,
     }))
-  }, [startDate, mode, title, endDate, id])
+  }, [startDate, title, endDate, id, setFormState])
 
   return (
     <Dialog open={open}>

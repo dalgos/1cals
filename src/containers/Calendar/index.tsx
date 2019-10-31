@@ -1,5 +1,5 @@
 import React from 'react'
-import { useSelector, useStore } from 'react-redux'
+import { useSelector } from 'react-redux'
 import styled from 'styled-components'
 
 import MonthlyView from 'containers/MonthlyView'

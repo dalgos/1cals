@@ -1,9 +1,4 @@
-import { ActionCreator } from 'redux'
-import { addWeeks, addMonths, startOfWeek } from 'date-fns'
-
-enum ACTION_TYPES {
-  MOVE_PERIOD = 'MOVE_PERIOD',
-}
+import { addWeeks, addMonths } from 'date-fns'
 
 interface TakeMovePeriodAction {
   (mode: Display['mode'], direction: 'next' | 'prev'): {

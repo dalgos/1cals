@@ -1,6 +1,6 @@
 import { fork, put, select, take } from 'redux-saga/effects'
 
-import { dateInfoSelector, navigatorStateSelector } from 'selectors'
+import { navigatorStateSelector } from 'selectors'
 import { fetchEventsActionMap, FETCH_EVENTS_ACTIONS } from 'ducks/events'
 import { ActionTypes, takeCloseEventForm } from 'ducks/eventForm'
 import { fetchMonthlyEvents, fetchWeeklyEvents, postEvent, patchEvent, deleteEvent } from 'api'
@@ -11,7 +11,6 @@ function *fetchEventsFlow() {
       yield take(FETCH_EVENTS_ACTIONS.REQUEST)
       const { currentDate, mode } = yield select(navigatorStateSelector)
 
-      // const { currentDate } = yield select(dateInfoSelector)
       const payload = yield mode === 'monthly' ? fetchMonthlyEvents(currentDate) : fetchWeeklyEvents(currentDate)
 
       yield put(fetchEventsActionMap.success(payload))

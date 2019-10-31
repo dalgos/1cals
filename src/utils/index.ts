@@ -2,7 +2,6 @@ import {
   addDays,
   addHours,
   eachDayOfInterval,
-  eachWeekOfInterval,
   getDay,
   getWeeksInMonth,
   startOfDay,
@@ -11,7 +10,7 @@ import {
   getISOWeek,
   getISODay,
 } from 'date-fns'
-import { get, set, update } from 'lodash'
+import { update } from 'lodash'
 
 /**
  * date가 포함된 주의 첫번째 날짜를 기준으로 7일의 date를 이용해 map을 수행한다.

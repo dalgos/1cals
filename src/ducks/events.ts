@@ -1,4 +1,4 @@
-import { AnyAction, ActionCreator, ActionCreatorsMapObject } from 'redux'
+import { AnyAction } from 'redux'
 
 export enum FETCH_EVENTS_ACTIONS {
   REQUEST = 'FETCH_EVENTS_REQUEST',

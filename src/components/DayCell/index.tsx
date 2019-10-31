@@ -2,7 +2,6 @@ import React from 'react'
 import { isToday } from 'date-fns'
 
 import { Cell } from './styles'
-import PlansGrid from 'components/PlansGrid'
 
 interface Props {
   children: React.ReactNode;

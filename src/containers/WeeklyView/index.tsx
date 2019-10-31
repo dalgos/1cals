@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getDate, format, addMilliseconds, addHours, getISOWeek, getISODay, startOfDay, getTime } from 'date-fns'
+import { getDate, format, addMilliseconds, addHours, getISODay, getTime } from 'date-fns'
 import { get } from 'lodash'
 
 import * as styles from './styles'
@@ -50,11 +50,11 @@ export default function MonthlyView(): JSX.Element {
 
   useEffect(() => {
     dispatch(fetchEventsActionMap.request())
-  }, [currentDate])
+  }, [currentDate, dispatch])
 
   useEffect(() => {
     setWeeklyEvents(arrangeEventsByDay(events))
-  }, [events])
+  }, [events, setWeeklyEvents])
 
   return (
     <div>

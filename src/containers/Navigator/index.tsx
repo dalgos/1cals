@@ -38,7 +38,7 @@ export default function Navigator() {
           : `MM월 ${getWeekOfMonth(currentDate)}주`
       )
     )
-  }, [currentDate, mode])
+  }, [currentDate, mode, setTitle])
 
   return (
     <Container>
