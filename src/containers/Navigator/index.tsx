@@ -1,8 +1,7 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Container, Button } from '@material-ui/core'
 import { useDispatch, useSelector } from 'react-redux'
 import { format, getWeekOfMonth } from 'date-fns'
-import { createSelector } from 'reselect'
 
 import NavButton, { DIRECTION } from '../../components/NavButton'
 import DisplayModeSelects from 'components/DisplayModeSelects'
@@ -12,6 +11,7 @@ import { takeMovePeriod, takeResetPeriod } from 'ducks/dateInfo'
 
 export default function Navigator() {
   const { currentDate, mode } = useSelector(navigatorStateSelector)
+  const { 0: title, 1: setTitle } = useState('')
 
   const dispatch = useDispatch()
   const handleDisplayModeChange = (evt: any) => {
@@ -28,17 +28,18 @@ export default function Navigator() {
    * 타이틀 클릭 이벤트 핸들러
    */
   const handleTitleClick = () => dispatch(takeResetPeriod())
-  /**
-   * 현재 디스플레이 모드에 따라 타이틀을 변경하여 출력한다.
-   */
-  const getTitle = () => {
-    return format(
-      currentDate,
-      mode === 'monthly' ?
-        'yyyy년 MM월'
-        : `MM월 ${getWeekOfMonth(currentDate)}주`
+
+  useEffect(() => {
+    setTitle(
+      format(
+        currentDate,
+        mode === 'monthly' ?
+          'yyyy년 MM월'
+          : `MM월 ${getWeekOfMonth(currentDate)}주`
+      )
     )
-  }
+  }, [currentDate, mode])
+
   return (
     <Container>
       <DisplayModeSelects
@@ -55,7 +56,7 @@ export default function Navigator() {
       <Button
         onClick={handleTitleClick}
       >
-        {getTitle()}
+        {title}
       </Button>
       <NavButton
         direction={DIRECTION.RIGHT}
