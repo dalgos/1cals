@@ -96,7 +96,10 @@ export default function MonthlyView(): JSX.Element {
           {dailyRepeater((date) => {
             const dailyIndex = getISODay(date)
             return (
-              <styles.PlansColumn onClick={handleColumnClick(date)}>
+              <styles.PlansColumn
+                key={`plan-col-${dailyIndex}`}
+                onClick={handleColumnClick(date)}
+              >
                 <styles.Panel></styles.Panel>
                 <styles.Presentaion>
                   {get(weeklyEvents, `${dailyIndex}`, []).map((event: Event) => {
