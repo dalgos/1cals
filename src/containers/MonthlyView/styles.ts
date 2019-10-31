@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 
+import EventCell from 'components/EventCell'
+
 export const Grid = styled.div`
   display: flex;
   flex-flow: column;
@@ -19,7 +21,7 @@ export const Row = styled.div`
   flex-flow: row;
 `
 
-export const EventCell = styled.div<{ left?: number; }>`
+export const MonthlyEventCell = styled(EventCell)<{ left?: number; }>`
   display: block;
   left: ${({left = 0}) => left};
   height: 1rem;

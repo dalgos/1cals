@@ -102,10 +102,10 @@ export default function MonthlyView(): JSX.Element {
                   {get(weeklyEvents, `${dailyIndex}`, []).map((event: Event) => {
                     return (
                       <styles.WeeklyEventCell
+                        key={`weekly-event-cell-${event.id}`}
                         base={getEventBase(getTime(date), event.startTime)}
                         size={getEventSize(event.startTime, event.endTime)}
-                        time={event.startTime}
-                        title={event.title}
+                        event={event}
                       />
                     )
                   })}

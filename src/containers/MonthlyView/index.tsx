@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getDate, getISOWeek, getISODay } from 'date-fns'
+import { getDate, getISOWeek, getISODay, getHours, getMinutes, setHours, setMinutes, addHours } from 'date-fns'
 import { get } from 'lodash'
+import { Dispatch } from 'redux'
 
 import { dateInfoSelector, eventsSelector } from 'selectors'
 import { getCalendarCells } from 'utils'
-import { Grid, RowGroup, EventCell } from './styles'
+import { Grid, RowGroup, MonthlyEventCell } from './styles'
 import DayCell from 'components/DayCell'
 import {
   HeaderCell,
@@ -14,7 +15,6 @@ import {
 import { takeOpenEventForm } from 'ducks/eventForm'
 import { fetchEventsActionMap } from 'ducks/events'
 import { arrangeEvents } from 'utils'
-
 
 export default function MonthlyView(): JSX.Element {
   const dispatch = useDispatch()
@@ -27,9 +27,13 @@ export default function MonthlyView(): JSX.Element {
    * @param selectedDate
    */
   const handleCellClick = (selectedDate: Date) => {
+    const currentDate = new Date()
+    const currentHours = getHours(currentDate)
+    const currentMinutes = getMinutes(currentDate)
+    const startDate = setHours(setMinutes(selectedDate, currentMinutes), currentHours)
     dispatch(takeOpenEventForm({
-      startDate: selectedDate,
-      endDate: selectedDate,
+      startDate,
+      endDate: addHours(startDate, 1),
       mode: 'create',
     }))
   }
@@ -57,24 +61,25 @@ export default function MonthlyView(): JSX.Element {
       {getCalendarCells(currentDate).map((rows, ridx) => {
         return (
           <RowGroup key={`row-group-${ridx}`}>
-            {rows.map(({ seq, timestamp }, idx) => {
+            {rows.map(({ seq, timestamp }) => {
               const weekIndex = getISOWeek(timestamp)
               const dayIndex = getISODay(timestamp)
               return (
-                <>
-                  <DayCell
-                    date={timestamp}
-                    day={`${getDate(timestamp)}`}
-                    key={seq}
-                    onClick={handleCellClick}
-                  >
-                    {get(eventsByMonthly, `${weekIndex}.${dayIndex}`, []).map((event: Event) => {
-                      return (
-                        <EventCell>{event.title}</EventCell>
-                      )
-                    })}
-                  </DayCell>
-                </>
+                <DayCell
+                  date={timestamp}
+                  day={`${getDate(timestamp)}`}
+                  key={seq}
+                  onClick={handleCellClick}
+                >
+                  {get(eventsByMonthly, `${weekIndex}.${dayIndex}`, []).map((event: Event) => {
+                    return (
+                      <MonthlyEventCell
+                        key={`monthly-event-cell-${event.id}`}
+                        event={event}
+                      />
+                    )
+                  })}
+                </DayCell>
               )
             })}
           </RowGroup>
