@@ -25,7 +25,12 @@ const DisplayModeSelect: React.FC<Props> = ({
       value={value}
     >
       {values.map(({ text, value }) => (
-        <MenuItem value={value}>{text}</MenuItem>
+        <MenuItem
+          key={value}
+          value={value}
+        >
+          {text}
+        </MenuItem>
       ))}
     </Select>
   )
