@@ -1,16 +1,19 @@
-import { fork, put, take } from 'redux-saga/effects'
+import { fork, put, select, take } from 'redux-saga/effects'
 
+import { dateInfoSelector } from 'selectors'
 import { fetchEventsActionMap, FETCH_EVENTS_ACTIONS } from 'ducks/events'
-import { fetchEvents } from 'api'
+import { fetchMonthlyEvents, fetchWeeklyEvents } from 'api'
 
 function *fetchEventsFlow() {
   while (true) {
     try {
       const { payload: {
-        currentDate,
         by,
       } } = yield take(FETCH_EVENTS_ACTIONS.REQUEST)
-      const payload = yield fetchEvents(currentDate, by)
+
+      const { currentDate } = yield select(dateInfoSelector)
+      const payload = yield by === 'month' ? fetchMonthlyEvents(currentDate) : fetchWeeklyEvents(currentDate)
+
       yield put(fetchEventsActionMap.success(payload))
     } catch (error) {
       yield put(fetchEventsActionMap.failure())

@@ -10,10 +10,25 @@ export const Grid = styled.div`
 export const RowGroup = styled.div`
   display: flex;
   flex-flow: row;
+  position: relative;
 `
 
 export const Row = styled.div`
   flex: 1;
   display: flex;
   flex-flow: row;
+`
+
+export const EventCell = styled.div<{ left?: number; }>`
+  display: block;
+  left: ${({left = 0}) => left};
+  height: 1rem;
+  flex: 1;
+  font-size: .8rem;
+  background-color: lightcoral;
+  color: white;
+  text-align: left;
+  padding: 0 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `

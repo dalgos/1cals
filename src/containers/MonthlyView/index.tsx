@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getDate } from 'date-fns'
+import { getDate, getISOWeek, getISODay } from 'date-fns'
+import { get } from 'lodash'
 
-import { dateInfoSelector } from 'selectors'
+import { dateInfoSelector, eventsSelector } from 'selectors'
 import { getCalendarCells } from 'utils'
-import { Grid, RowGroup } from './styles'
+import { Grid, RowGroup, EventCell } from './styles'
 import DayCell from 'components/DayCell'
 import {
   HeaderCell,
@@ -12,12 +13,20 @@ import {
 } from 'components/Calendar'
 import { takeOpenEventForm } from 'ducks/eventForm'
 import { fetchEventsActionMap } from 'ducks/events'
+import { arrangeEvents } from 'utils'
+
 
 export default function MonthlyView(): JSX.Element {
   const dispatch = useDispatch()
   const { currentDate } = useSelector(dateInfoSelector)
+  const events = useSelector(eventsSelector)
+  const { 0: eventsByMonthly, 1: setEventsByMonthly } = useState<{ [key: number]: { [key: number]: Event[] } }>(arrangeEvents(events))
+  
+  /**
+   * 날짜 Cell 클릭 이벤트 핸들러
+   * @param selectedDate
+   */
   const handleCellClick = (selectedDate: Date) => {
-    console.log(selectedDate)
     dispatch(takeOpenEventForm({
       startDate: selectedDate,
       endDate: selectedDate,
@@ -25,10 +34,14 @@ export default function MonthlyView(): JSX.Element {
     }))
   }
   
-  // 일정 목록을 가져온다
+  // 현재 기준날짜가 변경되는 경우, 목록을 새로 요청합니다.
   useEffect(() => {
-    dispatch(fetchEventsActionMap.request(currentDate))
+    dispatch(fetchEventsActionMap.request('month'))
   }, [currentDate])
+  // 일정 목록이 갱신되는 경우 일정 state를 업데이트합니다.
+  useEffect(() => {
+    setEventsByMonthly(arrangeEvents(events))
+  }, [events])
   
   return (
     <Grid>
@@ -41,17 +54,27 @@ export default function MonthlyView(): JSX.Element {
         <HeaderCell>금요일</HeaderCell>
         <HeaderCell>토요일</HeaderCell>
       </Row>
-      {getCalendarCells(currentDate).map((rows, idx) => {
+      {getCalendarCells(currentDate).map((rows, ridx) => {
         return (
-          <RowGroup key={`row-group-${idx}`}>
+          <RowGroup key={`row-group-${ridx}`}>
             {rows.map(({ seq, timestamp }, idx) => {
+              const weekIndex = getISOWeek(timestamp)
+              const dayIndex = getISODay(timestamp)
               return (
-                <DayCell
-                  date={timestamp}
-                  day={`${getDate(timestamp)}`}
-                  key={seq}
-                  onClick={handleCellClick}
-                />
+                <>
+                  <DayCell
+                    date={timestamp}
+                    day={`${getDate(timestamp)}`}
+                    key={seq}
+                    onClick={handleCellClick}
+                  >
+                    {get(eventsByMonthly, `${weekIndex}.${dayIndex}`, []).map((event: Event) => {
+                      return (
+                        <EventCell>{event.title}</EventCell>
+                      )
+                    })}
+                  </DayCell>
+                </>
               )
             })}
           </RowGroup>
