@@ -7,9 +7,8 @@ export enum FETCH_EVENTS_ACTIONS {
 }
 
 export const fetchEventsActionMap = {
-  request: (currentDate: Date, by: 'month' | 'week' = 'month'): AnyAction => ({
+  request: (by: 'month' | 'week'): AnyAction => ({
     payload: {
-      currentDate,
       by,
     },
     type: FETCH_EVENTS_ACTIONS.REQUEST,
