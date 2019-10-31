@@ -9,8 +9,9 @@ import {
   startOfMonth,
   startOfWeek,
   getISOWeek,
+  getISODay,
 } from 'date-fns'
-import { get } from 'lodash'
+import { get, set, update } from 'lodash'
 
 /**
  * date가 포함된 주의 첫번째 날짜를 기준으로 7일의 date를 이용해 map을 수행한다.
@@ -64,14 +65,40 @@ export function getCalendarCells(nextDate: Date = new Date()): Array<Array<Plan>
   })
 }
 
-export function arrangeEvents(Events: Event[]) {
+/**
+ * 일정 목록을 날짜 기준으로 정렬하여 반환합니다.
+ * @param {Event[]} Events 일정목록
+ */
+export function arrangeEventsByDay(Events: Event[]) {
   return Events.reduce<{ [key: string]: Event[] }>((prev, event) => {
+    const dayIndex = getISODay(event.startTime)
+    return update(
+      prev,
+      `${dayIndex}`,
+      (events: Event[] = []) => {
+        return [
+          ...events,
+          event
+        ]
+      }
+    )
+  }, {})
+}
+
+/**
+ * 일정 목록을 주차 기준으로 정렬하여 반환합니다.
+ * @param {Event[]} Events 일정목록
+ */
+export function arrangeEvents(Events: Event[]) {
+  return Events.reduce<{ [key: number]: { [key: number]: Event[] } }>((prev, event) => {
     const weekIndex = getISOWeek(event.startTime)
-    return (
-      {
-        ...prev,
-        [weekIndex.toString()]: [
-          ...get(prev, `${weekIndex}`, []),
+    const dayIndex = getISODay(event.startTime)
+    return update(
+      prev,
+      `${weekIndex}.${dayIndex}`,
+      (events: Event[] = []) => {
+        return [
+          ...events,
           event,
         ]
       }
