@@ -6,18 +6,9 @@ import { createSelector } from 'reselect'
 
 import NavButton, { DIRECTION } from '../../components/NavButton'
 import DisplayModeSelects from 'components/DisplayModeSelects'
-import { dateInfoSelector, displaySelector } from 'selectors'
+import { navigatorStateSelector } from 'selectors'
 import { takeChangeDisplayMode } from 'ducks/display'
 import { takeMovePeriod, takeResetPeriod } from 'ducks/dateInfo'
-
-const navigatorStateSelector = createSelector(
-  dateInfoSelector,
-  displaySelector,
-  ({ currentDate }, { mode }) => ({
-    currentDate,
-    mode,
-  })
-)
 
 export default function Navigator() {
   const { currentDate, mode } = useSelector(navigatorStateSelector)
