@@ -18,9 +18,9 @@ import {
   KeyboardDatePicker,
   MaterialUiPickersDate,
 } from '@material-ui/pickers'
-import { format } from 'date-fns'
+import { format, differenceInHours } from 'date-fns'
 
-import DurationSelects from 'components/DurationSelects'
+import DurationSelects, { SelectChangeEventHandler } from 'components/DurationSelects'
 
 const useStyles = makeStyles(() => ({
   textField: {
@@ -32,9 +32,12 @@ interface Props {
   open?: boolean;
   onClose?: () => void;
   onSubmit?: React.FormEventHandler<HTMLFormElement>;
+  onDelete?: () => {};
   startDate: Date;
   endDate: Date;
   mode: 'create' | 'edit';
+  title: string;
+  id: number;
 }
 
 /**
@@ -48,28 +51,75 @@ export default function EventFormDialog({
   endDate,
   mode,
   onSubmit,
+  onDelete,
+  title,
+  id,
 }: Props): JSX.Element {
-  const { 0: selectedDate, 1: setSelectedDate } = useState(startDate)
-  const { 0: time, 1: setTime } = useState(format(new Date(), 'hh:mm'))
+  const { 0: formState, 1: setFormState } = useState({
+    date: startDate,
+    time: format(new Date(), 'hh:mm'),
+    duration: '1',
+    title,
+    id,
+  })
+  // Form의 편집 모드 boolean
+  const isEditMode = mode === 'edit'
   const classes = useStyles()
 
   const handleDatePickerChange = (date: MaterialUiPickersDate) => {
-    setSelectedDate(date as Date)
+    // setSelectedDate(date as Date)
+    setFormState((prevState) => ({
+      ...prevState,
+      date: date as Date,
+    }))
+  }
+
+  const handleTitleChange: React.ChangeEventHandler<HTMLInputElement> = (evt) => {
+    const title = evt.currentTarget.value
+    setFormState((prevState) => ({
+      ...prevState,
+      title,
+    }))
+  }
+
+  const handleTimeChange: React.ChangeEventHandler<HTMLInputElement> = (evt) => {
+    const time = evt.currentTarget.value
+    setFormState((prevState) => ({
+      ...prevState,
+      time,
+    }))
+  }
+
+  const handleDurationChange: SelectChangeEventHandler = (event) => {
+    setFormState((prevState) => ({
+      ...prevState,
+      duration: event.target.value as string,
+    }))
+  }
+
+  const handleDeleteClick = () => {
+    onDelete && onDelete()
   }
 
   useEffect(() => {
-    setSelectedDate(startDate)
-    setTime(format(
-      mode === 'create' ?
-        new Date()
-        : startDate,
-      'hh:mm'
-    ))
-  }, [startDate, mode])
+    setFormState((prevState) => ({
+      ...prevState,
+      date: startDate as Date,
+      time: format(
+        startDate,
+        'HH:mm'
+      ),
+      title,
+      duration: `${differenceInHours(endDate, startDate)}`,
+      id,
+    }))
+  }, [startDate, mode, title, endDate, id])
+
   return (
     <Dialog open={open}>
       <DialogTitle>일정 등록</DialogTitle>
       <form onSubmit={onSubmit}>
+        <input type="hidden" name="id" value={formState.id} />
         <DialogContent>
           <DialogContentText>
             일정의 등록, 변경, 삭제가 가능합니다.
@@ -82,7 +132,7 @@ export default function EventFormDialog({
                     name="date"
                     label="날짜"
                     onChange={handleDatePickerChange}
-                    value={selectedDate}
+                    value={formState.date}
                     format="yyyy/MM/dd"
                   />
                 </Grid>
@@ -92,12 +142,16 @@ export default function EventFormDialog({
                     name="time"
                     label="시간"
                     type="time"
-                    defaultValue={format(startDate, 'hh:mm')}
+                    value={formState.time}
+                    onChange={handleTimeChange}
                     className={classes.textField}
                   />
                 </Grid>
                 <Grid item xs={3}>
-                  <DurationSelects />
+                  <DurationSelects
+                    onChange={handleDurationChange}
+                    value={formState.duration}
+                  />
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
@@ -106,6 +160,8 @@ export default function EventFormDialog({
                     label="일정 제목"
                     margin="normal"
                     className={classes.textField}
+                    value={formState.title}
+                    onChange={handleTitleChange}
                     required
                   />
                 </Grid>
@@ -114,8 +170,12 @@ export default function EventFormDialog({
         </DialogContent>
         <DialogActions>
           <Button onClick={onClose}>취소</Button>
-          {mode === 'edit' && <Button>삭제</Button>}
-          <Button type="submit">추가</Button>
+          {isEditMode &&
+            <Button
+              onClick={handleDeleteClick}
+            >삭제</Button>
+          }
+          <Button type="submit">{isEditMode ? '수정' : '추가'}</Button>
         </DialogActions>
       </form>
     </Dialog>

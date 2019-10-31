@@ -4,7 +4,7 @@ import { getTime } from 'date-fns'
 
 import EventFormDialog from 'components/EventFormDialog'
 import { eventFormSelector } from 'selectors'
-import { takeCloseEventForm, takeSubmitEventForm } from 'ducks/eventForm'
+import { takeCloseEventForm, takeSubmitEvent, takeDeleteEvent } from 'ducks/eventForm'
 
 const EventForm = () => {
   const dispatch = useDispatch()
@@ -13,6 +13,8 @@ const EventForm = () => {
     startDate,
     endDate,
     mode,
+    title,
+    id,
   } = useSelector(eventFormSelector)
   /**
    * EventFormDialog close 이벤트 핸들러
@@ -24,25 +26,31 @@ const EventForm = () => {
     const date = formData.get('date')
     const time = formData.get('time')
     const duration = formData.get('duration')
+    const id = parseInt(formData.get('id') as string)
 
     const title = formData.get('title') as string
     const startTime = getTime(new Date(`${date} ${time}`))
     const endTime = startTime + (parseInt(duration as string) * 1000 * 60 * 60)
 
-    dispatch(takeSubmitEventForm({
+    dispatch(takeSubmitEvent({
       startTime,
       endTime,
       title,
+      id,
     }))
   }
+  const handleDelete = () => dispatch(takeDeleteEvent(id.toString()))
   return (
     <EventFormDialog
+      id={id}
       open={open}
       onClose={handleClose}
       startDate={startDate}
       endDate={endDate}
       mode={mode}
       onSubmit={handleSubmit}
+      title={title}
+      onDelete={handleDelete}
     />
   );
 }

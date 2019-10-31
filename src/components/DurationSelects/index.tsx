@@ -6,20 +6,30 @@ import {
   Select,
 } from '@material-ui/core'
 
-export default function DurationSelects() {
-  const { 0: value, 1: setValue } = useState("1")
-  const handleChange: React.ChangeEventHandler<{
-    name?: string;
-    value: unknown;
-  }> = (evt) => {
-    setValue(evt.target.value as string)
+export interface SelectChangeEventHandler {
+  (
+    event: React.ChangeEvent<{ name?: string; value: unknown }>,
+    child: React.ReactNode,
+  ): void;
+}
+
+interface Props {
+  onChange?: SelectChangeEventHandler;
+  value: string;
+}
+
+export default function DurationSelects({ onChange, value }: Props) {
+  const { 0: valueState, 1: setValueState } = useState(value)
+  const handleChange: SelectChangeEventHandler = (evt, child) => {
+    setValueState(evt.target.value as string)
+    onChange && onChange(evt, child)
   }
   return (
     <FormControl>
       <InputLabel htmlFor="duration">시간</InputLabel>
       <Select
         onChange={handleChange}
-        value={value}
+        value={valueState}
         inputProps={{
           name: 'duration',
           id: 'duration',

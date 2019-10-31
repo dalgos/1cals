@@ -4,18 +4,25 @@ export enum ActionTypes {
   SUBMIT_EVENT_FORM_REQUEST = 'SUBMIT_EVENT_FORM_REQUEST',
   SUBMIT_EVENT_FORM_SUCCESS = 'SUBMIT_EVENT_FORM_SUCCESS',
   SUBMIT_EVENT_FORM_FAILURE = 'SUBMIT_EVENT_FORM_FAILURE',
+  DELETE_EVENT_REQUEST = 'DELETE_EVENT_REQUEST',
+  DELETE_EVENT_SUCCESS = 'DELETE_EVENT_SUCCESS',
+  DELETE_EVENT_FAILURE = 'DELETE_EVENT_FAILURE',
 }
 
 interface TakeOpenEventForm {
   (payload: {
     startDate: Date,
     endDate: Date,
+    title?: string,
     mode: 'create' | 'edit',
+    id?: number,
   }): {
     payload: {
       startDate: Date,
       endDate: Date,
       mode: 'create' | 'edit',
+      title?: string,
+      id?: number,
     },
     type: ActionTypes.OPEN_EVENT_FORM,
   }
@@ -41,9 +48,14 @@ export const takeCloseEventForm: TakeCloseEventForm = () => ({
   type: ActionTypes.CLOSE_EVENT_FORM,
 })
 
-export const takeSubmitEventForm = (payload: { startTime: number; endTime: number; title: string }) => ({
+export const takeSubmitEvent = (payload: { startTime: number; endTime: number; title: string; id: number; }) => ({
   payload,
   type: ActionTypes.SUBMIT_EVENT_FORM_REQUEST,
+})
+
+export const takeDeleteEvent = (payload: string) => ({
+  payload,
+  type: ActionTypes.DELETE_EVENT_REQUEST,
 })
 
 type EnhancedAction = ReturnType<TakeOpenEventForm> | ReturnType<TakeCloseEventForm>;
@@ -53,6 +65,8 @@ const initialState: EventForm = {
   startDate: new Date(),
   endDate: new Date(),
   mode: 'create',
+  title: '',
+  id: -1,
 }
 
 export default function reducer(
@@ -61,13 +75,14 @@ export default function reducer(
 ): EventForm {
   switch (action.type) {
     case ActionTypes.OPEN_EVENT_FORM:
-      console.log(action.payload.startDate)
       return {
         ...state,
         startDate: action.payload.startDate,
         endDate: action.payload.endDate,
         mode: action.payload.mode,
         open: true,
+        title: action.payload.title || '',
+        id: action.payload.id || -1,
       };
     case ActionTypes.CLOSE_EVENT_FORM:
       return {

@@ -12,6 +12,8 @@ interface EventForm {
   startDate: Date;
   endDate: Date;
   mode: 'create' | 'edit';
+  title: string;
+  id: number;
 }
 
 interface Plan {
@@ -20,7 +22,7 @@ interface Plan {
 }
 
 interface Event {
-  sid: number;
+  id: number;
   startTime: number;
   endTime: number;
   title: string;

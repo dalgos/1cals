@@ -52,3 +52,18 @@ export const postEvent = async (data: object) => {
   }))
 }
 
+export const patchEvent = async (id:number, data: object) => {
+  return await axios({
+    url: `/api/events/${id}`,
+    method: 'patch',
+    data,
+  })
+}
+
+export const deleteEvent = async (id: number) => {
+  return await axios({
+    url: `/api/events/${id}`,
+    method: 'delete',
+  })
+}
+
