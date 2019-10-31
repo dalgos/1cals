@@ -1,5 +1,7 @@
 import styled from 'styled-components'
 
+import EventCell from 'components/EventCell'
+
 export const Container = styled.div`
   display: flex;
 `
@@ -88,4 +90,15 @@ export const Presentaion = styled.div`
   position: relative;
   height: 100%;
   width: 100%;
+`
+
+export const WeeklyEventCell = styled(EventCell)<{ base?: number; size?: number; }>`
+  position: absolute;
+  height: ${({ size = 1 }) => size * 40}px;
+  overflow: hidden;
+  padding: .2rem;
+  background-color: skyblue;
+  width: 100%;
+  box-sizing: border-box;
+  top: ${({ base = 0 }) => 40 * base}px;
 `
