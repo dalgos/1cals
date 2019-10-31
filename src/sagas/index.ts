@@ -2,7 +2,8 @@ import { fork, put, select, take } from 'redux-saga/effects'
 
 import { dateInfoSelector } from 'selectors'
 import { fetchEventsActionMap, FETCH_EVENTS_ACTIONS } from 'ducks/events'
-import { fetchMonthlyEvents, fetchWeeklyEvents } from 'api'
+import { ActionTypes, takeCloseEventForm } from 'ducks/eventForm'
+import { fetchMonthlyEvents, fetchWeeklyEvents, postEvent } from 'api'
 
 function *fetchEventsFlow() {
   while (true) {
@@ -21,6 +22,20 @@ function *fetchEventsFlow() {
   }
 }
 
+function *submitEventFlow() {
+  while (true) {
+    try {
+      const { payload } = yield take(ActionTypes.SUBMIT_EVENT_FORM_REQUEST)
+      yield postEvent(payload)
+      yield put(takeCloseEventForm())
+      yield put({ type: FETCH_EVENTS_ACTIONS.REQUEST })
+    } catch (error) {
+      
+    }
+  }
+}
+
 export default function* rootSaga() {
   yield fork(fetchEventsFlow)
+  yield fork(submitEventFlow)
 }

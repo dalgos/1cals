@@ -44,4 +44,11 @@ export const fetchMonthlyEvents = async (currentDate: Date): Promise<EventsRespo
   return await fetchEvents(minimumTime, maximumTime)
 }
 
+export const postEvent = async (data: object) => {
+  return await axios(({
+    url: `/api/events`,
+    method: 'post',
+    data,
+  }))
+}
 

@@ -1,6 +1,9 @@
-enum ActionTypes {
+export enum ActionTypes {
   OPEN_EVENT_FORM = 'OPEN_EVENT_FORM',
   CLOSE_EVENT_FORM = 'CLOSE_EVENT_FORM',
+  SUBMIT_EVENT_FORM_REQUEST = 'SUBMIT_EVENT_FORM_REQUEST',
+  SUBMIT_EVENT_FORM_SUCCESS = 'SUBMIT_EVENT_FORM_SUCCESS',
+  SUBMIT_EVENT_FORM_FAILURE = 'SUBMIT_EVENT_FORM_FAILURE',
 }
 
 interface TakeOpenEventForm {
@@ -36,6 +39,11 @@ interface TakeCloseEventForm {
  */
 export const takeCloseEventForm: TakeCloseEventForm = () => ({
   type: ActionTypes.CLOSE_EVENT_FORM,
+})
+
+export const takeSubmitEventForm = (payload: { startTime: number; endTime: number; title: string }) => ({
+  payload,
+  type: ActionTypes.SUBMIT_EVENT_FORM_REQUEST,
 })
 
 type EnhancedAction = ReturnType<TakeOpenEventForm> | ReturnType<TakeCloseEventForm>;

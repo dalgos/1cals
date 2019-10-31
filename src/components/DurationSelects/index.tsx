@@ -16,13 +16,13 @@ export default function DurationSelects() {
   }
   return (
     <FormControl>
-      <InputLabel htmlFor="eventDuration">단위</InputLabel>
+      <InputLabel htmlFor="duration">시간</InputLabel>
       <Select
         onChange={handleChange}
         value={value}
         inputProps={{
-          name: 'eventDuration',
-          id: 'event-duration',
+          name: 'duration',
+          id: 'duration',
         }}
       >
         <MenuItem value="1">1시간</MenuItem>
