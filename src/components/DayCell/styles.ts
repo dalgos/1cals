@@ -3,7 +3,7 @@ import styled from 'styled-components'
 export const Cell = styled.div<{ activated?: boolean }>`
   flex: 1;
   display: block;
-  height: 80px;
+  min-height: 80px;
   border-bottom: 1px solid #eeeeee;
   border-right: 1px solid #eeeeee;
   &:first-child {

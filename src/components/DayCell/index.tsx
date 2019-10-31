@@ -5,12 +5,14 @@ import { Cell } from './styles'
 import PlansGrid from 'components/PlansGrid'
 
 interface Props {
+  children: React.ReactNode;
   date: Date;
   day: string;
   onClick: (date: Date) => void;
 }
 
 export default function DayCell({
+  children,
   day,
   date,
   onClick,
@@ -22,7 +24,7 @@ export default function DayCell({
       onClick={handleClick}
     >
       <h2>{day}</h2>
-      <div></div>
+      <div>{children}</div>
     </Cell>
   )
 }
