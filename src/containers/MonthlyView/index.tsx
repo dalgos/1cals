@@ -36,7 +36,7 @@ export default function MonthlyView(): JSX.Element {
   
   // 현재 기준날짜가 변경되는 경우, 목록을 새로 요청합니다.
   useEffect(() => {
-    dispatch(fetchEventsActionMap.request('month'))
+    dispatch(fetchEventsActionMap.request())
   }, [currentDate])
   // 일정 목록이 갱신되는 경우 일정 state를 업데이트합니다.
   useEffect(() => {

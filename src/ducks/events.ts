@@ -7,10 +7,7 @@ export enum FETCH_EVENTS_ACTIONS {
 }
 
 export const fetchEventsActionMap = {
-  request: (by: 'month' | 'week'): AnyAction => ({
-    payload: {
-      by,
-    },
+  request: (): AnyAction => ({
     type: FETCH_EVENTS_ACTIONS.REQUEST,
   }),
   success: (payload: any[]) => ({

@@ -49,7 +49,7 @@ export default function MonthlyView(): JSX.Element {
   }
 
   useEffect(() => {
-    dispatch(fetchEventsActionMap.request('week'))
+    dispatch(fetchEventsActionMap.request())
   }, [currentDate])
 
   useEffect(() => {
