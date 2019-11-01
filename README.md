@@ -1,44 +1,48 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# 1Cals
 
-## Available Scripts
+## 프로젝트 실행 방법
 
-In the project directory, you can run:
+### 패키지 설치
 
-### `yarn start`
+```bash
+$ yarn install
+```
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### 실행
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+```bash
+$ yarn start
+```
 
-### `yarn test`
+## 프로젝트 설명
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+`create-react-app`을 이용하여 빠르게 어플리케이션 개발환경을 구성하였고, `react` 와 `typescript`를 사용하여 개발하였습니다. 어플리케이션 전체의 state 관리를 위해 `redux`를 채용하였고, 어플리케이션 액션을 효율적으로 관리하기 위해 `redux-saga`를 사용하였습니다. UI 컴포넌트 라이브러리는 `material-ui`를 활용하였습니다.
 
-### `yarn build`
+Function Component로 작성되었으며, hooks를 적극적으로 이용하였습니다.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. UI 프레임워크
+   1. React + Typescript + styled-components
+2. Global State 관리
+   1. redux + redux-saga
+3. 데이터베이스
+   1. json-server를 이용한 mock 데이터 활용
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+## 문제해결 전략
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. 어플리케이션의 동작을 액션 단위로 구성하였으며, 각각의 액션은 redux-saga 베이스의 액션 플로우로 구성될 수 있도록 작성하였습니다.
+2. smart & dumb component 구조로 분리하였습니다.
+3. ducks 패턴을 적용하여, 액션생성자와 리듀서를 함께 관리할 수 있도록 작성했습니다.
+4. 데이터 구조를 기준으로 redux store를 구성하였습니다.
+5. 액션생성자는 가능한한 간략하게 액션에 대한 설명만을 작성할 수 있도록 고려했으며, saga를 활용하여 액션을 조합할 수 있도록 구성하였습니다.
+6. 월별 일정표의 날짜 셀을 클릭시, 해당 날짜와 현재 시간을 참고한 기본 1시간 단위의 일정을 생성할 수 있습니다.
+7. 주별 화면에서 날짜별 시간 타임라인을 선택하는 경우, 해당 위치의 시간대를 기준으로 1시간의 일정을 생성할 수 있습니다.
+   * 클릭 위치에 따라 0분과 30분을 초기값으로 설정하였습니다.
 
-### `yarn eject`
+## 미구현 항목
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. 중복 데이터 검증
+   * 생성하고자 하는 일정의 시작 날짜와 종료 날짜를 기준으로 일정 목록을 조회하고, weekIndex와 dayIndex를 기준으로 중복되는 데이터가 존재하는지 검증이 가능할 것으로 생각합니다.
+2. Drag & Drop
+   * 각 일정을 담고 있는 EventCell의 드래그 이벤트를 제어하여 목적지 영역의 위치값을 기준으로 일정을 변경할 수 있을 것으로 생각합니다.
+   * 드래그 & 드롭 액션을 추가하고, 일정 업데이트 액션을 하나의 플로우로 구성할 수 있겠습니다.
+3. 단위테스트
