@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, ReactHTML } from 'react'
 import {
   Button,
   Dialog,
@@ -16,9 +16,10 @@ import {
   KeyboardDatePicker,
   MaterialUiPickersDate,
 } from '@material-ui/pickers'
-import { format, differenceInHours } from 'date-fns'
+import { format, differenceInHours, set, getYear, getMonth, getDay } from 'date-fns'
 
 import DurationSelects, { SelectChangeEventHandler } from 'components/DurationSelects'
+import { setHours, setMinutes } from 'date-fns/esm'
 
 const useStyles = makeStyles(() => ({
   textField: {
@@ -26,10 +27,17 @@ const useStyles = makeStyles(() => ({
   }
 }))
 
+export interface SubmitParams {
+  startDate: Date;
+  endDate: Date;
+  title: string;
+  id: number;
+}
+
 interface Props {
   open?: boolean;
   onClose?: () => void;
-  onSubmit?: React.FormEventHandler<HTMLFormElement>;
+  onSubmit: (params: SubmitParams) => void;
   onDelete?: () => {};
   startDate: Date;
   endDate: Date;
@@ -55,8 +63,8 @@ export default function EventFormDialog({
 }: Props): JSX.Element {
   const { 0: formState, 1: setFormState } = useState({
     date: startDate,
-    time: format(new Date(), 'hh:mm'),
-    duration: '1',
+    startDate,
+    endDate,
     title,
     id,
   })
@@ -64,10 +72,10 @@ export default function EventFormDialog({
   const isEditMode = mode === 'edit'
   const classes = useStyles()
 
-  const handleDatePickerChange = (date: MaterialUiPickersDate) => {
+  const handleDateChange = (propName: 'startDate' | 'endDate') => (pickedDate: MaterialUiPickersDate) => {
     setFormState((prevState) => ({
       ...prevState,
-      date: date as Date,
+      [propName]: pickedDate as Date,
     }))
   }
 
@@ -79,18 +87,11 @@ export default function EventFormDialog({
     }))
   }
 
-  const handleTimeChange: React.ChangeEventHandler<HTMLInputElement> = (evt) => {
-    const time = evt.currentTarget.value
+  const handleTimeChange = (propName: 'startDate' | 'endDate') => (evt: React.ChangeEvent<HTMLInputElement>) => {
+    const { 0: hours, 1: minutes } = evt.currentTarget.value.split(':')
     setFormState((prevState) => ({
       ...prevState,
-      time,
-    }))
-  }
-
-  const handleDurationChange: SelectChangeEventHandler = (event) => {
-    setFormState((prevState) => ({
-      ...prevState,
-      duration: event.target.value as string,
+      [propName]: setHours(setMinutes(prevState[propName], parseInt(minutes)), parseInt(hours)),
     }))
   }
 
@@ -98,21 +99,33 @@ export default function EventFormDialog({
     onDelete && onDelete()
   }
 
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (evt) => {
+    evt.preventDefault()
+    const { startDate, endDate, title, id } = formState
+    onSubmit && onSubmit({
+      startDate,
+      endDate,
+      title,
+      id,
+    })
+  }
+
   useEffect(() => {
     setFormState((prevState) => ({
       ...prevState,
-      date: startDate as Date,
-      time: format(startDate, 'HH:mm'),
+      startDate: startDate as Date,
+      endDate: endDate as Date,
+      // time: format(startDate, 'HH:mm'),
       title,
-      duration: `${differenceInHours(endDate, startDate)}`,
+      // duration: `${differenceInHours(endDate, startDate)}`,
       id,
     }))
   }, [startDate, title, endDate, id, setFormState])
 
   return (
-    <Dialog open={open}>
+    <Dialog maxWidth="lg" open={open}>
       <DialogTitle>일정 등록</DialogTitle>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={handleSubmit}>
         <input type="hidden" name="id" value={formState.id} />
         <DialogContent>
           <DialogContentText>
@@ -120,33 +133,50 @@ export default function EventFormDialog({
           </DialogContentText>
           <MuiPickersUtilsProvider utils={DateFnsUtils}>
               <Grid container spacing={2}>
-                <Grid item xs={6}>
+                <Grid item xs={3}>
                   <KeyboardDatePicker
-                    id="date"
+                    id="startDate"
                     name="date"
-                    label="날짜"
-                    onChange={handleDatePickerChange}
-                    value={formState.date}
+                    label="시작 날짜"
+                    onChange={handleDateChange('startDate')}
+                    value={formState.startDate}
                     format="yyyy/MM/dd"
                   />
                 </Grid>
                 <Grid item xs={3}>
                   <TextField
-                    id="time"
-                    name="time"
-                    label="시간"
+                    id="startTime"
+                    name="startTime"
+                    label="시작 시간"
                     type="time"
-                    value={formState.time}
-                    onChange={handleTimeChange}
+                    value={format(formState.startDate, 'HH:mm')}
+                    onChange={handleTimeChange('startDate')}
                     className={classes.textField}
                   />
                 </Grid>
                 <Grid item xs={3}>
-                  <DurationSelects
-                    onChange={handleDurationChange}
-                    value={formState.duration}
+                  <KeyboardDatePicker
+                    id="endDate"
+                    name="endDate"
+                    label="종료 날짜"
+                    onChange={handleDateChange('endDate')}
+                    value={formState.endDate}
+                    format="yyyy/MM/dd"
                   />
                 </Grid>
+                <Grid item xs={3}>
+                  <TextField
+                    id="endTime"
+                    name="endTime"
+                    label="종료 시간"
+                    type="time"
+                    value={format(formState.endDate, 'HH:mm')}
+                    onChange={handleTimeChange('endDate')}
+                    className={classes.textField}
+                  />
+                </Grid>
+              </Grid>
+              <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <TextField
                     id="title"

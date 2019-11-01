@@ -2,7 +2,7 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getTime } from 'date-fns'
 
-import EventFormDialog from 'components/EventFormDialog'
+import EventFormDialog, { SubmitParams } from 'components/EventFormDialog'
 import { eventFormSelector } from 'selectors'
 import { takeCloseEventForm, takeSubmitEvent, takeDeleteEvent } from 'ducks/eventForm'
 
@@ -20,21 +20,10 @@ const EventForm = () => {
    * EventFormDialog close 이벤트 핸들러
    */
   const handleClose = () => dispatch(takeCloseEventForm())
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
-    event.preventDefault()
-    const formData = new FormData(event.currentTarget)
-    const date = formData.get('date')
-    const time = formData.get('time')
-    const duration = formData.get('duration')
-    const id = parseInt(formData.get('id') as string)
-
-    const title = formData.get('title') as string
-    const startTime = getTime(new Date(`${date} ${time}`))
-    const endTime = startTime + (parseInt(duration as string) * 1000 * 60 * 60)
-
+  const handleSubmit = ({ startDate, endDate, title, id }: SubmitParams) => {
     dispatch(takeSubmitEvent({
-      startTime,
-      endTime,
+      startTime: getTime(startDate),
+      endTime: getTime(endDate),
       title,
       id,
     }))
