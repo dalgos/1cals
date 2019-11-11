@@ -9,6 +9,9 @@ import {
   startOfWeek,
   getISOWeek,
   getISODay,
+  getMonth,
+  getDate,
+  set,
 } from 'date-fns'
 import { update } from 'lodash'
 
@@ -103,4 +106,23 @@ export function arrangeEvents(Events: Event[]) {
       }
     )
   }, {})
+}
+
+/**
+ * 이벤트 날짜 변경시 새로운 월, 일로 업데이트된 새로운 시작, 종료 데이트 값을 반환합니다.
+ * (시간은 변경되지 않습니다.)
+ * @param {number} startTime 
+ * @param {number} endTime 
+ * @param {Date} targetDate
+ * @returns {object} { nextStartTime: 업데이트 된 시작 타임, nextEndTime: 업데이트 된 종료 타임 }
+ */
+export function calcNextEventDate(startTime: number, endTime: number, targetDate: Date) {
+  const setOption = {
+    month: getMonth(targetDate),
+    date: getDate(targetDate)
+  }
+  return {
+    nextStartTime: set(startTime, setOption).getTime(),
+    nextEndTime: set(endTime, setOption).getTime()
+  }
 }

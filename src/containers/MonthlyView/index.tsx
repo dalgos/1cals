@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getDate, getISOWeek, getISODay, getHours, getMinutes, setHours, setMinutes, addHours } from 'date-fns'
+import { getDate, getISOWeek, getISODay, getHours, getMinutes, setHours, setMinutes, addHours, setDate, getMonth, set } from 'date-fns'
 import { get } from 'lodash'
 
 import { dateInfoSelector, eventsSelector } from 'selectors'
@@ -11,9 +11,9 @@ import {
   HeaderCell,
   Row,
 } from 'components/Calendar'
-import { takeOpenEventForm } from 'ducks/eventForm'
+import { takeOpenEventForm, takeSubmitEvent } from 'ducks/eventForm'
 import { fetchEventsActionMap } from 'ducks/events'
-import { arrangeEvents } from 'utils'
+import { arrangeEvents, calcNextEventDate } from 'utils'
 
 export default function MonthlyView(): JSX.Element {
   const dispatch = useDispatch()
@@ -34,6 +34,37 @@ export default function MonthlyView(): JSX.Element {
       startDate,
       endDate: addHours(startDate, 1),
       mode: 'create',
+    }))
+  }
+
+  /**
+   * 날짜 셀 드랍 이벤트 발생시 대상 eventID 와 day 값을 이용해
+   * 대상 일정의 기간을 업데이트합니다.
+   * @param eventID 
+   */
+  const handleDayCellDrop = (eventData: string, targetDate: Date) => {
+    const {
+      startTime,
+      endTime,
+      title,
+      id,
+    } = JSON.parse(eventData)
+
+    const {
+      nextStartTime,
+      nextEndTime,
+    } = calcNextEventDate(
+      startTime,
+      endTime,
+      targetDate,
+    )
+    
+    // 드랍 이벤트 발생 시 form submit 액션을 이용하여 일정을 업데이트합니다.
+    dispatch(takeSubmitEvent({
+      endTime: nextEndTime,
+      id: parseInt(id, 10),
+      startTime: nextStartTime,
+      title,
     }))
   }
   
@@ -69,6 +100,7 @@ export default function MonthlyView(): JSX.Element {
                   day={`${getDate(timestamp)}`}
                   key={seq}
                   onClick={handleCellClick}
+                  onDrop={handleDayCellDrop}
                 >
                   {get(eventsByMonthly, `${weekIndex}.${dayIndex}`, []).map((event: Event) => {
                     return (
