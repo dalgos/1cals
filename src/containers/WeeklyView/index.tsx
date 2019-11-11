@@ -4,11 +4,12 @@ import { getDate, format, addMilliseconds, addHours, getISODay, getTime } from '
 import { get } from 'lodash'
 
 import * as styles from './styles'
+import WeekPresentation from 'components/WeekPresentation'
 import { dateInfoSelector, eventsSelector } from 'selectors'
 import { eachDayOfWeek, eachHourOfDay, getDayByKor } from 'utils'
-import { takeOpenEventForm } from 'ducks/eventForm'
+import { takeOpenEventForm, takeSubmitEvent } from 'ducks/eventForm'
 import { fetchEventsActionMap } from 'ducks/events'
-import { arrangeEventsByDay } from 'utils'
+import { arrangeEventsByDay, calcNextEventDate } from 'utils'
 
 const SEGMENT = 48
 const ONE_HOUR_MILLIS = 1000 * 60 * 60
@@ -47,6 +48,34 @@ export default function MonthlyView(): JSX.Element {
       mode: 'create',
     }))
   }
+
+  const handlePresentationDrop = (eventData: string, targetDate: Date) => {
+    const {
+      startTime,
+      endTime,
+      title,
+      id,
+    } = JSON.parse(eventData)
+
+    const {
+      nextStartTime,
+      nextEndTime,
+    } = calcNextEventDate(
+      startTime,
+      endTime,
+      targetDate,
+    )
+    
+    // 드랍 이벤트 발생 시 form submit 액션을 이용하여 일정을 업데이트합니다.
+    dispatch(takeSubmitEvent({
+      endTime: nextEndTime,
+      id: parseInt(id, 10),
+      startTime: nextStartTime,
+      title,
+    }))
+  }
+
+  const handlePresentaionDragOver = () => {}
 
   useEffect(() => {
     dispatch(fetchEventsActionMap.request())
@@ -101,7 +130,10 @@ export default function MonthlyView(): JSX.Element {
                 onClick={handleColumnClick(date)}
               >
                 <styles.Panel></styles.Panel>
-                <styles.Presentaion>
+                <WeekPresentation
+                  date={date}
+                  onDrop={handlePresentationDrop}
+                >
                   {get(weeklyEvents, `${dailyIndex}`, []).map((event: Event) => {
                     return (
                       <styles.WeeklyEventCell
@@ -112,7 +144,7 @@ export default function MonthlyView(): JSX.Element {
                       />
                     )
                   })}
-                </styles.Presentaion>
+                </WeekPresentation>
               </styles.PlansColumn>
             )
           })}
