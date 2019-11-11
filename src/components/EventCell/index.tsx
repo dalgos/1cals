@@ -11,6 +11,7 @@ interface Props {
 }
 
 type ClickEventHandler = React.MouseEventHandler<HTMLDivElement>
+type DragEventHandler = React.DragEventHandler<HTMLDivElement>
 
 const EventCell: React.FC<Props> = ({
   className,
@@ -28,10 +29,21 @@ const EventCell: React.FC<Props> = ({
       id: event.id,
     }))
   }
+  /**
+   * drag 이벤트 핸들러
+   * @param {React.DragEvent} evt drag start event
+   */
+  const handleDragStart: DragEventHandler = (evt) => {
+    evt.dataTransfer.setData('text/plain', JSON.stringify(event))
+    evt.dataTransfer.dropEffect = 'move'
+  }
+
   return (
     <div
       className={className}
       onClick={handleClick}
+      draggable={true}
+      onDragStart={handleDragStart}
     >
       <div>
         {format(event.startTime, 'hh:mm')}
